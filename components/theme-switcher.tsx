@@ -21,11 +21,12 @@ const ThemeSwitcher = () => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return null;
-  }
-
   const ICON_SIZE = 16;
+
+  // Return a placeholder with the same dimensions during SSR and when not mounted
+  if (!mounted) {
+    return <div className="w-8 h-8" />;
+  }
 
   return (
     <DropdownMenu>

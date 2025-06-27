@@ -1,10 +1,10 @@
 <a href="https://demo-nextjs-with-supabase.vercel.app/">
   <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
+  <h1 align="center">Sistema de Gestión Inmobiliaria con Next.js y Supabase</h1>
 </a>
 
 <p align="center">
- The fastest way to build apps with Next.js and Supabase
+ Una aplicación web para gestionar propiedades inmobiliarias con Next.js y Supabase
 </p>
 
 <p align="center">
@@ -16,6 +16,97 @@
   <a href="#more-supabase-examples"><strong>More Examples</strong></a>
 </p>
 <br/>
+
+## Características
+
+- Aplicación completa para inmobiliarias basada en [Next.js](https://nextjs.org) App Router
+- Backend con Supabase (base de datos PostgreSQL y autenticación)
+- API RESTful para gestión de propiedades e imágenes
+- Sistema de autenticación para agentes inmobiliarios
+- Gestión de propiedades con imágenes múltiples
+- Almacenamiento de imágenes en Supabase Storage
+- Validación de datos con Zod
+
+## Configuración
+
+Sigue estos pasos para configurar el proyecto:
+
+1. Crea un proyecto en Supabase desde [el dashboard de Supabase](https://database.new)
+
+2. Ejecuta este SQL en el editor SQL de Supabase para crear las tablas necesarias:
+
+   ```sql
+   -- Copia y pega aquí el contenido de lib/supabase/schema.sql
+   ```
+
+3. Configura las variables de entorno:
+
+   - Copia `.env.example` a `.env.local`
+   - Actualiza con tus credenciales de Supabase:
+     ```
+     NEXT_PUBLIC_SUPABASE_URL=[URL de tu proyecto Supabase]
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=[API ANON KEY de tu proyecto Supabase]
+     ```
+
+4. Instala las dependencias:
+
+   ```bash
+   pnpm install
+   ```
+
+5. Inicia el servidor de desarrollo:
+   ```bash
+   pnpm dev
+   ```
+
+La aplicación estará disponible en [localhost:3000](http://localhost:3000/).
+
+## API Endpoints
+
+### Propiedades
+
+- `GET /api/properties` - Listar propiedades con filtros opcionales
+- `POST /api/properties` - Crear nueva propiedad
+- `GET /api/properties/:id` - Obtener detalles de una propiedad
+- `PUT /api/properties/:id` - Actualizar una propiedad
+- `DELETE /api/properties/:id` - Eliminar una propiedad
+
+### Imágenes
+
+- `POST /api/properties/:id/images` - Subir una imagen a una propiedad
+- `GET /api/properties/:id/images` - Obtener todas las imágenes de una propiedad
+- `PATCH /api/properties/:id/images/:imageId` - Establecer como imagen principal
+- `DELETE /api/properties/:id/images/:imageId` - Eliminar una imagen
+
+### Agentes
+
+- `GET /api/agents` - Listar todos los agentes
+- `POST /api/agents` - Crear perfil de agente
+- `GET /api/agents/profile` - Obtener perfil del agente autenticado
+- `PUT /api/agents/profile` - Actualizar perfil del agente autenticado
+
+### Autenticación
+
+- `POST /api/auth/register` - Registrar un nuevo agente
+
+## Estructura del Backend
+
+- `/lib/supabase/` - Configuración y clientes de Supabase
+- `/lib/types.ts` - Tipos de TypeScript y esquemas de Zod
+- `/app/api/` - API endpoints (App Router)
+
+## Seguridad
+
+El sistema implementa seguridad a través de:
+
+- Autenticación con Supabase Auth
+- Row Level Security (RLS) para proteger datos en la base de datos
+- Validación de datos con Zod
+- Middleware para verificar autenticación en rutas API
+
+## Contribuciones
+
+Las contribuciones son bienvenidas. Por favor abre un issue antes de enviar una pull request.
 
 ## Features
 
