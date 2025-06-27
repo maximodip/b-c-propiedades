@@ -22,7 +22,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b">
+      <header className="border-b border-b-foreground/10">
         <div className="container mx-auto px-4 flex justify-between items-center h-16">
           <div className="flex items-center gap-6">
             <Link href="/dashboard" className="font-semibold">

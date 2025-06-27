@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export function Navbar() {
   return (
-    <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
+    <div className="hidden md:block w-full max-w-5xl justify-between items-center p-3 px-5 text-sm">
       {/* Main navigation - centered on desktop */}
       <div className="hidden md:flex flex-1 justify-center gap-8 items-center font-medium">
         <Link

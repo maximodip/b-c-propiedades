@@ -81,7 +81,7 @@ export function Header() {
 
       {/* Mobile menu - only shown after client-side hydration */}
       {mounted && isMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[64px] z-50 p-4">
+        <div className="md:hidden fixed inset-0 top-[64px] z-50 p-4 bg-background">
           <div className="flex flex-col space-y-4">
             <Link
               href={"/"}
