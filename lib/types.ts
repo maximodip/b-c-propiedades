@@ -120,3 +120,12 @@ export const PropertyFiltersSchema = z.object({
 });
 
 export type PropertyFilters = z.infer<typeof PropertyFiltersSchema>;
+
+// Esquema para crear/actualizar agente inmobiliario
+export const UpsertAgentSchema = z.object({
+  name: z.string().min(1, "El nombre es requerido"),
+  email: z.string().email("Email inválido").optional(),
+  phone: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
+  avatar_url: z.string().url("URL inválida").nullable().optional(),
+});

@@ -1,13 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-// PATCH /api/inquiries/[id] - Marcar una consulta como leída/no leída
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+function extractIdFromRequest(request: NextRequest): string | null {
   try {
-    const { id } = params;
+    const { pathname } = new URL(request.url);
+    const segments = pathname.split("/").filter(Boolean);
+    // Expecting [..., 'inquiries', '{id}']
+    const id = segments[segments.length - 1];
+    return id || null;
+  } catch {
+    return null;
+  }
+}
+
+// PATCH /api/inquiries/[id] - Marcar una consulta como leída/no leída
+export async function PATCH(request: NextRequest) {
+  try {
+    const id = extractIdFromRequest(request);
+    if (!id) {
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+    }
 
     // Verificar autenticación
     const supabase = await createClient();
@@ -75,12 +87,12 @@ export async function PATCH(
 }
 
 // DELETE /api/inquiries/[id] - Eliminar una consulta
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest) {
   try {
-    const { id } = params;
+    const id = extractIdFromRequest(request);
+    if (!id) {
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+    }
 
     // Verificar autenticación
     const supabase = await createClient();
