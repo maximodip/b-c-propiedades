@@ -1,7 +1,6 @@
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { Database } from "@/lib/supabase/database.types";
 
 // Middleware para verificar autenticación
 export async function withAuth(
@@ -26,7 +25,7 @@ export async function withAgentAuth(
   handler: (
     req: NextRequest,
     session: NonNullable<Awaited<ReturnType<typeof getSession>>>,
-    agent: any
+    agent: unknown
   ) => Promise<NextResponse>
 ) {
   const session = await getSession();
@@ -36,7 +35,7 @@ export async function withAgentAuth(
   }
 
   // Verificar que el usuario es un agente
-  const supabase = createRouteHandlerClient<Database>({ cookies });
+  const supabase = createRouteHandlerClient({ cookies });
   const { data: agent, error } = await supabase
     .from("agents")
     .select("*")
@@ -55,7 +54,7 @@ export async function withAgentAuth(
 
 // Función auxiliar para obtener la sesión
 async function getSession() {
-  const supabase = createRouteHandlerClient<Database>({ cookies });
+  const supabase = createRouteHandlerClient({ cookies });
   const {
     data: { session },
   } = await supabase.auth.getSession();

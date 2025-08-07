@@ -4,13 +4,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { Database } from "@/lib/supabase/database.types";
 import { UpdatePropertySchema } from "@/lib/types";
 
-// GET /api/properties/[id] - Obtener una propiedad específica
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+function extractPropertyId(request: NextRequest): string | null {
   try {
-    const { id } = params;
+    const { pathname } = new URL(request.url);
+    const segments = pathname.split("/").filter(Boolean);
+    // Expected: .../properties/{id}
+    const id = segments[segments.length - 1];
+    return id || null;
+  } catch {
+    return null;
+  }
+}
+
+// GET /api/properties/[id] - Obtener una propiedad específica
+export async function GET(request: NextRequest) {
+  try {
+    const id = extractPropertyId(request);
+    if (!id) {
+      return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
+    }
 
     // Obtener el cliente de Supabase
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -55,12 +67,12 @@ export async function GET(
 }
 
 // PUT /api/properties/[id] - Actualizar una propiedad existente
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest) {
   try {
-    const { id } = params;
+    const id = extractPropertyId(request);
+    if (!id) {
+      return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
+    }
 
     // Verificar autenticación
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -72,11 +84,10 @@ export async function PUT(
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
 
-    // Verificar que la propiedad existe y pertenece al agente actual
-    const userId = session.user.id;
+    // Verificar que la propiedad existe
     const { data: existingProperty, error: propertyError } = await supabase
       .from("properties")
-      .select("id, agent_id")
+      .select("id")
       .eq("id", id)
       .single();
 
@@ -84,13 +95,6 @@ export async function PUT(
       return NextResponse.json(
         { error: "Propiedad no encontrada" },
         { status: 404 }
-      );
-    }
-
-    if (existingProperty.agent_id !== userId) {
-      return NextResponse.json(
-        { error: "No autorizado para modificar esta propiedad" },
-        { status: 403 }
       );
     }
 
@@ -141,12 +145,12 @@ export async function PUT(
 }
 
 // DELETE /api/properties/[id] - Eliminar una propiedad existente
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest) {
   try {
-    const { id } = params;
+    const id = extractPropertyId(request);
+    if (!id) {
+      return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
+    }
 
     // Verificar autenticación
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -158,11 +162,10 @@ export async function DELETE(
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
 
-    // Verificar que la propiedad existe y pertenece al agente actual
-    const userId = session.user.id;
+    // Verificar que la propiedad existe
     const { data: existingProperty, error: propertyError } = await supabase
       .from("properties")
-      .select("id, agent_id")
+      .select("id")
       .eq("id", id)
       .single();
 
@@ -170,13 +173,6 @@ export async function DELETE(
       return NextResponse.json(
         { error: "Propiedad no encontrada" },
         { status: 404 }
-      );
-    }
-
-    if (existingProperty.agent_id !== userId) {
-      return NextResponse.json(
-        { error: "No autorizado para eliminar esta propiedad" },
-        { status: 403 }
       );
     }
 

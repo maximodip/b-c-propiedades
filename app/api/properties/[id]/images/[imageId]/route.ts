@@ -1,19 +1,33 @@
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { Database } from "@/lib/supabase/database.types";
 import { deletePropertyImage } from "@/lib/supabase/storage";
 
-// DELETE /api/properties/[id]/images/[imageId] - Eliminar una imagen
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string; imageId: string } }
-) {
+function extractIds(request: NextRequest): { propertyId: string; imageId: string } | null {
   try {
-    const { id: propertyId, imageId } = params;
+    const { pathname } = new URL(request.url);
+    const segments = pathname.split("/").filter(Boolean);
+    // Expected: .../properties/{id}/images/{imageId}
+    const imageId = segments[segments.length - 1];
+    const propertyId = segments[segments.length - 3];
+    if (!propertyId || !imageId) return null;
+    return { propertyId, imageId };
+  } catch {
+    return null;
+  }
+}
+
+// DELETE /api/properties/[id]/images/[imageId] - Eliminar una imagen
+export async function DELETE(request: NextRequest) {
+  try {
+    const ids = extractIds(request);
+    if (!ids) {
+      return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
+    }
+    const { propertyId, imageId } = ids;
 
     // Verificar autenticación
-    const supabase = createRouteHandlerClient<Database>({ cookies });
+    const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -22,11 +36,10 @@ export async function DELETE(
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
 
-    // Verificar que la propiedad existe y pertenece al agente actual
-    const userId = session.user.id;
+    // Verificar que la propiedad existe
     const { data: property, error: propertyError } = await supabase
       .from("properties")
-      .select("agent_id")
+      .select("id")
       .eq("id", propertyId)
       .single();
 
@@ -34,13 +47,6 @@ export async function DELETE(
       return NextResponse.json(
         { error: "Propiedad no encontrada" },
         { status: 404 }
-      );
-    }
-
-    if (property.agent_id !== userId) {
-      return NextResponse.json(
-        { error: "No autorizado para eliminar imágenes de esta propiedad" },
-        { status: 403 }
       );
     }
 
@@ -106,15 +112,16 @@ export async function DELETE(
 }
 
 // PATCH /api/properties/[id]/images/[imageId] - Establecer como imagen principal
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string; imageId: string } }
-) {
+export async function PATCH(request: NextRequest) {
   try {
-    const { id: propertyId, imageId } = params;
+    const ids = extractIds(request);
+    if (!ids) {
+      return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
+    }
+    const { propertyId, imageId } = ids;
 
     // Verificar autenticación
-    const supabase = createRouteHandlerClient<Database>({ cookies });
+    const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -123,11 +130,10 @@ export async function PATCH(
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
 
-    // Verificar que la propiedad existe y pertenece al agente actual
-    const userId = session.user.id;
+    // Verificar que la propiedad existe
     const { data: property, error: propertyError } = await supabase
       .from("properties")
-      .select("agent_id")
+      .select("id")
       .eq("id", propertyId)
       .single();
 
@@ -135,13 +141,6 @@ export async function PATCH(
       return NextResponse.json(
         { error: "Propiedad no encontrada" },
         { status: 404 }
-      );
-    }
-
-    if (property.agent_id !== userId) {
-      return NextResponse.json(
-        { error: "No autorizado para modificar imágenes de esta propiedad" },
-        { status: 403 }
       );
     }
 

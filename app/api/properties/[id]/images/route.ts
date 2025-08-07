@@ -4,13 +4,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { Database } from "@/lib/supabase/database.types";
 import { uploadPropertyImage } from "@/lib/supabase/storage";
 
-// POST /api/properties/[id]/images - Subir una imagen a una propiedad
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+function extractPropertyId(request: NextRequest): string | null {
   try {
-    const { id: propertyId } = params;
+    const { pathname } = new URL(request.url);
+    const segments = pathname.split("/").filter(Boolean);
+    // Expected: .../properties/{id}/images
+    const propertyId = segments[segments.length - 2];
+    return propertyId || null;
+  } catch {
+    return null;
+  }
+}
+
+// POST /api/properties/[id]/images - Subir una imagen a una propiedad
+export async function POST(request: NextRequest) {
+  try {
+    const propertyId = extractPropertyId(request);
+    if (!propertyId) {
+      return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
+    }
 
     // Verificar autenticación
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -124,12 +136,12 @@ export async function POST(
 }
 
 // GET /api/properties/[id]/images - Obtener todas las imágenes de una propiedad
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
-    const { id: propertyId } = params;
+    const propertyId = extractPropertyId(request);
+    if (!propertyId) {
+      return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
+    }
 
     // Obtener el cliente de Supabase
     const supabase = createRouteHandlerClient<Database>({ cookies });
