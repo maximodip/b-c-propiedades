@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -5,12 +6,9 @@ import { Database } from "@/lib/supabase/database.types";
 import { deletePropertyImage } from "@/lib/supabase/storage";
 
 // DELETE /api/properties/[id]/images/[imageId] - Eliminar una imagen
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string; imageId: string } }
-) {
+export async function DELETE(request: NextRequest, context: any) {
   try {
-    const { id: propertyId, imageId } = params;
+    const { id: propertyId, imageId } = context.params;
 
     // Verificar autenticación
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -106,12 +104,9 @@ export async function DELETE(
 }
 
 // PATCH /api/properties/[id]/images/[imageId] - Establecer como imagen principal
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string; imageId: string } }
-) {
+export async function PATCH(request: NextRequest, context: any) {
   try {
-    const { id: propertyId, imageId } = params;
+    const { id: propertyId, imageId } = context.params;
 
     // Verificar autenticación
     const supabase = createRouteHandlerClient<Database>({ cookies });

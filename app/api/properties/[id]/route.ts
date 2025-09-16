@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -5,12 +6,9 @@ import { Database } from "@/lib/supabase/database.types";
 import { UpdatePropertySchema } from "@/lib/types";
 
 // GET /api/properties/[id] - Obtener una propiedad específica
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, context: any) {
   try {
-    const { id } = params;
+    const { id } = context.params;
 
     // Obtener el cliente de Supabase
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -55,12 +53,9 @@ export async function GET(
 }
 
 // PUT /api/properties/[id] - Actualizar una propiedad existente
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, context: any) {
   try {
-    const { id } = params;
+    const { id } = context.params;
 
     // Verificar autenticación
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -141,12 +136,9 @@ export async function PUT(
 }
 
 // DELETE /api/properties/[id] - Eliminar una propiedad existente
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, context: any) {
   try {
-    const { id } = params;
+    const { id } = context.params;
 
     // Verificar autenticación
     const supabase = createRouteHandlerClient<Database>({ cookies });

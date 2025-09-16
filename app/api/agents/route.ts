@@ -5,7 +5,7 @@ import { Database } from "@/lib/supabase/database.types";
 import { UpsertAgentSchema } from "@/lib/types";
 
 // GET /api/agents - Obtener todos los agentes (solo para administradores)
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Verificar autenticación
     const supabase = createRouteHandlerClient<Database>({ cookies });

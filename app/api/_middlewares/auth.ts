@@ -26,7 +26,7 @@ export async function withAgentAuth(
   handler: (
     req: NextRequest,
     session: NonNullable<Awaited<ReturnType<typeof getSession>>>,
-    agent: any
+    agent: Database["public"]["Tables"]["agents"]["Row"]
   ) => Promise<NextResponse>
 ) {
   const session = await getSession();

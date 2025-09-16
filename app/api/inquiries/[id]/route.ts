@@ -1,13 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 // PATCH /api/inquiries/[id] - Marcar una consulta como leída/no leída
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, context: any) {
   try {
-    const { id } = params;
+    const id = context.params.id;
 
     // Verificar autenticación
     const supabase = await createClient();
@@ -75,12 +73,9 @@ export async function PATCH(
 }
 
 // DELETE /api/inquiries/[id] - Eliminar una consulta
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, context: any) {
   try {
-    const { id } = params;
+    const id = context.params.id;
 
     // Verificar autenticación
     const supabase = await createClient();

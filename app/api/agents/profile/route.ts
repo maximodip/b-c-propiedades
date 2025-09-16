@@ -68,7 +68,7 @@ export async function PUT(request: NextRequest) {
     const userId = session.user.id;
 
     // Verificar si el perfil de agente existe
-    const { data: existingProfile, error: profileError } = await supabase
+    const { data: existingProfile } = await supabase
       .from("agents")
       .select("id")
       .eq("id", userId)

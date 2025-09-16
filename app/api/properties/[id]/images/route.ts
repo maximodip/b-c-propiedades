@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -5,12 +6,9 @@ import { Database } from "@/lib/supabase/database.types";
 import { uploadPropertyImage } from "@/lib/supabase/storage";
 
 // POST /api/properties/[id]/images - Subir una imagen a una propiedad
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, context: any) {
   try {
-    const { id: propertyId } = params;
+    const { id: propertyId } = context.params;
 
     // Verificar autenticación
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -124,12 +122,9 @@ export async function POST(
 }
 
 // GET /api/properties/[id]/images - Obtener todas las imágenes de una propiedad
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, context: any) {
   try {
-    const { id: propertyId } = params;
+    const { id: propertyId } = context.params;
 
     // Obtener el cliente de Supabase
     const supabase = createRouteHandlerClient<Database>({ cookies });

@@ -9,6 +9,39 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      agents: {
+        Row: {
+          id: string;
+          name: string;
+          email: string;
+          phone: string | null;
+          bio: string | null;
+          photo_url: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          name: string;
+          email?: string;
+          phone?: string | null;
+          bio?: string | null;
+          photo_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          email?: string;
+          phone?: string | null;
+          bio?: string | null;
+          photo_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       properties: {
         Row: {
           id: string;
@@ -23,6 +56,7 @@ export interface Database {
           area_size: number | null;
           contact_email: string;
           contact_phone: string | null;
+          agent_id: string;
           published_at: string;
           created_at: string;
           updated_at: string;
@@ -40,6 +74,7 @@ export interface Database {
           area_size?: number | null;
           contact_email: string;
           contact_phone?: string | null;
+          agent_id: string;
           published_at?: string;
           created_at?: string;
           updated_at?: string;
@@ -57,11 +92,20 @@ export interface Database {
           area_size?: number | null;
           contact_email?: string;
           contact_phone?: string | null;
+          agent_id?: string;
           published_at?: string;
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "properties_agent_id_fkey";
+            columns: ["agent_id"];
+            isOneToOne: false;
+            referencedRelation: "agents";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       property_images: {
         Row: {
